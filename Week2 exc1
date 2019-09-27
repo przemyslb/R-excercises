@@ -1,0 +1,48 @@
+---
+title: "chicken data set excercise"
+author: "przemek"
+date: "27 September 2019"
+output: html_document
+---
+Open the ChickWeight dataset, what is the average weight of a chick after 21 days? 
+How many chicks weight more than this average? 
+How many chicks are on each diet
+
+```{r setup, include=FALSE}
+head(ChickWeight)
+df<-ChickWeight
+```
+What is the average weight of a chicken after 21 days?
+
+```{r cars}
+df3<-df %>%
+  filter(Time >= 21) %>%
+  select(weight, Time, Chick, Diet)
+#weight of the chichen (to see if there is any difference)
+mean(df$weight)
+#mean weight of the chicken after 21 days
+mean(df3$weight)
+takemean<-mean(df3$weight)
+#i take it so i can use it next
+```
+
+How many chicks weight more than this average? 
+
+```{r pressure, echo=FALSE}
+df4<-df %>%
+  filter(weight >= takemean) %>%
+  select(weight, Time, Chick, Diet)
+nrow(df4)
+
+```
+
+How many chicks are on each diet
+```{r pressure, echo=FALSE}
+df %>%
+    group_by(Diet) %>%
+    summarise(count=n())
+totalrows<-nrow(df)
+totalrows
+x<-220 + 120 + 120 + 118
+x==totalrows
+```
