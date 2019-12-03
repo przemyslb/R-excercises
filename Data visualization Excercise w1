@@ -1,0 +1,96 @@
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(sqldf)
+library(gsubfn)
+library(proto)
+library(RSQLite)
+library(sp)
+
+studentresult <- read.csv("~/Desktop/home folder for R/studentresult.csv")
+View(studentresult)
+
+#1. What are the total marks (oral plus written divided by two) for each student for each subject? (2 marks)
+avgmark <- mean( studentresult$Mark_Oral [ !is.na( studentresult$Mark_Oral) & studentresult$Name == 'Mary Healy' ] )
+avgmark
+
+#replacing NA with average mark for Mary
+studentresult$Mark_Oral <- ifelse(is.na(studentresult$Mark_Oral), as.numeric(avgmark), studentresult$Mark_Oral)
+View(studentresult)
+
+#What are the total marks (oral plus written divided by two) for each student for each subject?
+new_studentresults <- studentresult %>%
+  group_by(Name,Subject) %>%
+  summarize(average_marks_forexams = sum(Mark_Oral, Mark_Written)/2)
+View(new_studentresults)
+
+results <- sqldf("select Subject, Name, sum(Mark_Oral + Mark_Written)/2 as Mark from studentresult group by Subject, Name") 
+View(results) 
+
+ggplot(data=results, aes(x= Name, y=Mark,fill=as.factor(Subject))) + geom_bar(stat="identity")
+#---------------------------------
+#2. What is the relationship between age and mark? 
+
+str(studentresult)
+
+# Convert factor to a date for DOB variable
+studentresult$DOB <- as.Date(studentresult$DOB, "%d-%m-%Y")
+current_date   <- as.Date("17-11-2019", "%d-%m-%Y")
+ndays_age <- current_date - studentresult$DOB
+# Calculate age in years
+studentresult$Age <- floor(ndays_age/365)
+
+# Plot relationship between age and results for mark written 
+ggplot(data=studentresult, aes(x= Age, y=Mark_Written)) + geom_point(col="red")
+
+# Plot relationship between age and results for mark oral 
+ggplot(data=studentresult, aes(x= Age, y=Mark_Oral)) + geom_point(col="red")
+
+
+#---------------------
+#3.Did any students do better on their written compared with their oral (or vice versa)?
+studentresults_oral <- studentresult %>%
+  group_by(Name) %>%
+  summarize(average_mark_oral = mean(Mark_Oral))
+str(studentresults_oral)
+studentresults_written <- studentresult %>%
+  group_by(Name) %>%
+  summarize(average_mark_written = mean(Mark_Written))
+
+p1 <- ggplot(data = studentresults_oral, aes(x = Name, y = average_mark_oral)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(y = average_mark_oral, label = average_mark_oral))
+p1
+
+
+p2 <- ggplot(data = studentresults_written, aes(x = Name, y = average_mark_written)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(y = average_mark_written, label = average_mark_written))
+p2
+
+
+#---------------------
+#4.What subject obtained the best results on average? 
+
+# Calculate the average mark (for oral and written) for each subject
+studentresult$Total_Marks <- studentresult$Mark_Written + studentresult$Mark_Oral
+avg_marks_per_subject <- aggregate(data=studentresult, Total_Marks ~ Subject,mean)
+
+# Plot the results
+subjectAvgmarkplot <- ggplot(data=avg_marks_per_subject, aes(x= Subject, y=Total_Marks)) + 
+  geom_bar(stat="identity",aes(fill=Subject), width = 0.25)
+subjectAvgmarkplot + scale_fill_manual(values=c("Maths"="steelblue", "English"="firebrick", "Irish"="darkgreen", "Japanese"="pink", "Chinese"="orange"))
+subjectAvgmarkplot
+
+#---------------------
+#5.
+
+# Calculate the average mark for oral exam for each student
+avg_marks_oral_per_student <- aggregate(data=studentresult, Mark_Oral ~ Name,mean)
+avg_marks_oral_per_student
+
+# Plot the results
+studentAvgOralmarkplot <- ggplot(data=avg_marks_oral_per_student, aes(x= Name, y=Mark_Oral)) + 
+  geom_bar(stat="identity",aes(fill=Name), width = 0.25)
+studentAvgOralmarkplot + scale_fill_manual(values=c("Hercule Poirot"="steelblue", "Joe O'Neil"="firebrick", "Mary Healy"="darkgreen"))
+
