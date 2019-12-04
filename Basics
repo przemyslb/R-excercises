@@ -1,3 +1,9 @@
+make it a vector
+avector <- as.vector(Q10)
+class(avector) 
+str(avector)
+
+query excel file
 library(readxl)
 path <- "path/to/your/file.xlsx"
 excel_sheets(path = path)
