@@ -1,3 +1,13 @@
+Save as csv
+write.csv(healthstudy,'healthstudy2.csv')
+
+# Saving on object in RData format
+save(data1, file = "data.RData")
+# Save multiple objects
+save(data1, data2, file = "data.RData")
+# To load the data again
+load("data.RData")
+
 Unzip folder
 setwd("C:\\Users\\Sharvari\\Downloads")
 uzp <- "C:\\Users\\Sharvari\\Downloads\\rprog%2Fdata%2Fspecdata.zip"
