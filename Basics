@@ -1,3 +1,7 @@
+# merge two data frames by ID
+total <- merge(data frameA,data frameB,by="ID")
+
+
 make it a vector
 avector <- as.vector(Q10)
 class(avector) 
