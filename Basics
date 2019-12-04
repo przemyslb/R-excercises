@@ -1,3 +1,13 @@
+Unzip folder
+setwd("C:\\Users\\Sharvari\\Downloads")
+uzp <- "C:\\Users\\Sharvari\\Downloads\\rprog%2Fdata%2Fspecdata.zip"
+unzip(uzp, exdir = "C:\\Users\\Sharvari\\Desktop\\specdata")
+
+convert dataframe of numbers to vector
+yourvector <- unlist(Q1)
+str(yourvector)
+nextdd<-c(yourvector)
+
 # merge two data frames by ID
 total <- merge(data frameA,data frameB,by="ID")
 
