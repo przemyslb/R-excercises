@@ -20,7 +20,12 @@ nextdd<-c(yourvector)
 
 # merge two data frames by ID
 total <- merge(data frameA,data frameB,by="ID")
-
+#
+Inner join: merge(df1, df2) will work for these examples because R automatically joins the frames by common variable names, but you would most likely want to specify merge(df1, df2, by = "CustomerId") to make sure that you were matching on only the fields you desired. You can also use the by.x and by.y parameters if the matching variables have different names in the different data frames.
+Outer join: merge(x = df1, y = df2, by = "CustomerId", all = TRUE)
+Left outer: merge(x = df1, y = df2, by = "CustomerId", all.x = TRUE)
+Right outer: merge(x = df1, y = df2, by = "CustomerId", all.y = TRUE)
+Cross join: merge(x = df1, y = df2, by = NULL)
 
 make it a vector
 avector <- as.vector(Q10)
@@ -31,20 +36,6 @@ query excel file
 library(readxl)
 path <- "path/to/your/file.xlsx"
 excel_sheets(path = path)
-shareimprove this answer
-answered Jul 1 '17 at 10:45
-
-Matt Dancho
-2,9841919 silver badges1919 bronze badges
-5
-imo this should be the no.1 answer these days – JanLauGe Aug 17 '17 at 15:03
-1
-Thanks - faster and leaner than XLConnect. – Bryce Chamberlain Sep 9 '18 at 15:59
-2
-superb and neat. Thank you. – Raghavan vmvs Dec 14 '18 at 10:53
-add a comment
- 
-0
 
 dataIn <-loadWorkbook(file.path(filenames[1], sep=""))
 
